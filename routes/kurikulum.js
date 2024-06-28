@@ -6,6 +6,7 @@ const { CapaianPembelajaran } = require("../models");
 const { TujuanPembelajaran } = require("../models");
 const { AlurTujuanPembelajaran } = require("../models");
 const { ModulPembelajaran } = require("../models");
+const { Asesmen } = require("../models");
 
 const v = new Validator();
 
@@ -385,6 +386,96 @@ router.put("/modul_pembelajaran/:idModul", async (req, res) => {
 
   dataModul = await dataModul.update(req.body);
   res.json(dataModul);
+});
+
+// asesmen
+// get all data asesmen
+router.get("/:idMp/asesmen", async (req, res) => {
+  const idMp = req.params.idMp;
+  const asesmen = await Asesmen.findAll({
+    where: { idMp: idMp },
+  });
+  res.send(asesmen);
+});
+
+// get data asesmen by id
+router.get("/asesmen/:idAsesmen", async (req, res) => {
+  const idAsesmen = req.params.idAsesmen;
+  const asesmen = await Asesmen.findByPk(idAsesmen);
+
+  if (!asesmen) {
+    return res.status(404).json({ msg: "Asesmen tidak ditemukan" });
+  }
+
+  res.json(asesmen);
+});
+
+// create data asesmen
+router.post("/:idMp/asesmen", async (req, res) => {
+  const idMp = req.params.idMp;
+  const schema = {
+    namaBab: "string",
+    jenisAsesmen: "string",
+    bentukAsesmen: "string",
+    keterangan: "string",
+  };
+
+  const validate = v.validate(req.body, schema);
+  // cek validasi
+  if (validate.length) {
+    return res.status(400).json(validate);
+  }
+
+  const asesmen = await Asesmen.create({
+    namaBab: req.body.namaBab,
+    jenisAsesmen: req.body.jenisAsesmen,
+    bentukAsesmen: req.body.bentukAsesmen,
+    keterangan: req.body.keterangan,
+    idMp: idMp,
+  });
+
+  res.status(201).json(asesmen);
+});
+
+// update asesmen
+router.put("/asesmen/:idAsesmen", async (req, res) => {
+  const idAsesmen = req.params.idAsesmen;
+  let dataAsesmen = await Asesmen.findByPk(idAsesmen);
+
+  if (!dataAsesmen) {
+    return res.status(400).json({ msg: "Asesmen tidak ditemukan" });
+  }
+
+  const schema = {
+    namaBab: "string|optional",
+    jenisAsesmen: "string|optional",
+    bentukAsesmen: "string|optional",
+    keterangan: "string|optional",
+  };
+
+  const validate = v.validate(req.body, schema);
+  // cek validasi
+  if (validate.length) {
+    return res.status(400).json(validate);
+  }
+
+  dataAsesmen = await dataAsesmen.update(req.body);
+  res.json(dataAsesmen);
+});
+
+// delete asesmen
+router.delete("/asesmen/:idAsesmen", async (req, res) => {
+  const idAsesmen = req.params.idAsesmen;
+  const asesmen = await Asesmen.findByPk(idAsesmen);
+
+  if (!asesmen) {
+    return res.status(404).json({ msg: "Asesmen tidak ditemukan" });
+  }
+
+  await asesmen.destroy();
+  res.json({
+    msg: "Asesmen berhasil dihapus",
+  });
 });
 
 module.exports = router;
