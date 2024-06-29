@@ -9,7 +9,7 @@ module.exports = {
         primaryKey: true,
         allowNull: false,
       },
-      namaFase: {
+      namaKelas: {
         type: Sequelize.TEXT,
         allowNull: false,
       },

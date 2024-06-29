@@ -8,7 +8,7 @@ module.exports = (sequelize, DataTypes) => {
         primaryKey: true,
         allowNull: false,
       },
-      namaFase: {
+      namaKelas: {
         type: DataTypes.TEXT,
         allowNull: false,
       },

@@ -35,7 +35,7 @@ router.get("/:id", async (req, res) => {
 // create data
 router.post("/", async (req, res, next) => {
   const schema = {
-    namaFase: "string",
+    namaKelas: "string",
     semester: "string",
     mata_pelajaran: "string",
     jenis_evaluasi: "string",
@@ -67,7 +67,7 @@ router.put("/:id", async (req, res) => {
   }
 
   const schema = {
-    namaFase: "string|optional",
+    namaKelas: "string|optional",
     semester: "string|optional",
     mata_pelajaran: "string|optional",
     jenis_evaluasi: "string|optional",
