@@ -11,6 +11,7 @@ var faseRouter = require("./routes/fase");
 var kurikulumRouter = require("./routes/kurikulum");
 var profilPelajar = require("./routes/profilpelajar");
 var evaluasiRouter = require("./routes/evaluasi");
+var dokkurRouter = require("./routes/dokkur");
 
 var app = express();
 
@@ -38,5 +39,6 @@ app.use("/fase", faseRouter);
 app.use("/kurikulum", kurikulumRouter);
 app.use("/profilpelajar", profilPelajar);
 app.use("/evaluasi", evaluasiRouter);
+app.use("/dokkur", dokkurRouter);
 
 module.exports = app;
