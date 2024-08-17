@@ -37,8 +37,8 @@ router.post("/", async (req, res, next) => {
   const schema = {
     namaKelas: "string",
     semester: "string",
-    mata_pelajaran: "string",
-    jenis_evaluasi: "string",
+    tahunPelajaran: "string",
+    linkEvaluasi: "string",
     masalah_evaluasi: "string",
     status_evaluasi: "string",
   };
@@ -69,8 +69,8 @@ router.put("/:id", async (req, res) => {
   const schema = {
     namaKelas: "string|optional",
     semester: "string|optional",
-    mata_pelajaran: "string|optional",
-    jenis_evaluasi: "string|optional",
+    tahunPelajaran: "string|optional",
+    linkEvaluasi: "string|optional",
     masalah_evaluasi: "string|optional",
     status_evaluasi: "string|optional",
   };

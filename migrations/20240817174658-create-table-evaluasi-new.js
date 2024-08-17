@@ -1,5 +1,3 @@
-"use strict";
-
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable("evaluasi", {
@@ -17,11 +15,11 @@ module.exports = {
         type: Sequelize.TEXT,
         allowNull: false,
       },
-      mata_pelajaran: {
+      tahunPelajaran: {
         type: Sequelize.TEXT,
         allowNull: false,
       },
-      jenis_evaluasi: {
+      linkEvaluasi: {
         type: Sequelize.TEXT,
         allowNull: false,
       },

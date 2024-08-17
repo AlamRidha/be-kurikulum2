@@ -13,3 +13,4 @@
    -> (5) make model object
    -> (6) install fastest validator : npm i fastest-validator, https://www.npmjs.com/package/fastest-validator
    -> (7) if make model then use router in app.js then : npx sequelize db:migrate
+   -> (8) delete migration npx sequelize db:migrate:undo --name fileMigrationName

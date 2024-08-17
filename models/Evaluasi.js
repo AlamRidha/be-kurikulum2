@@ -16,11 +16,11 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.TEXT,
         allowNull: false,
       },
-      mata_pelajaran: {
+      tahunPelajaran: {
         type: DataTypes.TEXT,
         allowNull: false,
       },
-      jenis_evaluasi: {
+      linkEvaluasi: {
         type: DataTypes.TEXT,
         allowNull: false,
       },
