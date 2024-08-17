@@ -21,6 +21,18 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
+app.get("/uploads/:filename", (req, res) => {
+  const filePath = path.join(__dirname, "uploads", req.params.filename);
+  res.sendFile(filePath, (err) => {
+    if (err) {
+      console.error("Error sending file:", err);
+      res.status(err.status).end();
+    }
+  });
+});
+
 app.use(
   cors({
     credentials: true,

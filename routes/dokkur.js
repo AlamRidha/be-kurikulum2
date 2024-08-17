@@ -16,7 +16,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-// Rute untuk menambahkan data kurikulum beserta upload file PDF
+// create data
 router.post("/", upload.single("linkKurikulum"), async (req, res) => {
   try {
     const { namaKurikulum, tahun } = req.body;
@@ -30,6 +30,7 @@ router.post("/", upload.single("linkKurikulum"), async (req, res) => {
 
     res.status(201).json(newKurikulum);
   } catch (error) {
+    console.log(error);
     res.status(500).json({ error: "Failed to create kurikulum." });
   }
 });
