@@ -14,6 +14,7 @@ var profilPelajar = require("./routes/profilpelajar");
 var evaluasiRouter = require("./routes/evaluasi");
 var dokkurRouter = require("./routes/dokkur");
 const authMiddleware = require("./middleware/authMiddleware");
+const loggingMiddleware = require("./middleware/loggingMiddleware");
 
 var app = express();
 
@@ -47,12 +48,12 @@ app.use(
 );
 
 app.use("/", indexRouter);
-app.use("/users", usersRouter);
-app.use("/dbuku", authMiddleware, dbukuRouter);
-app.use("/fase", authMiddleware, faseRouter);
-app.use("/kurikulum", authMiddleware, kurikulumRouter);
-app.use("/profilpelajar", authMiddleware, profilPelajar);
-app.use("/evaluasi", authMiddleware, evaluasiRouter);
-app.use("/dokkur", authMiddleware, dokkurRouter);
+app.use("/users", loggingMiddleware, usersRouter);
+app.use("/dbuku", authMiddleware, loggingMiddleware, dbukuRouter);
+app.use("/fase", authMiddleware, loggingMiddleware, faseRouter);
+app.use("/kurikulum", authMiddleware, loggingMiddleware, kurikulumRouter);
+app.use("/profilpelajar", authMiddleware, loggingMiddleware, profilPelajar);
+app.use("/evaluasi", authMiddleware, loggingMiddleware, evaluasiRouter);
+app.use("/dokkur", authMiddleware, loggingMiddleware, dokkurRouter);
 
 module.exports = app;
