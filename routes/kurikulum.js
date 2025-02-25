@@ -14,10 +14,20 @@ const v = new Validator();
 // get all data capaian pembelajaran
 router.get("/:idMp/capaian_pembelajaran", async (req, res) => {
   const idMp = req.params.idMp;
+
   const capaian_pembelajaran = await CapaianPembelajaran.findAll({
     where: { idMp: idMp },
   });
-  res.send(capaian_pembelajaran);
+
+  if (capaian_pembelajaran.length === 0) {
+    return res
+      .status(404)
+      .json({ status: "success", msg: "Data Capaian Pembelajaran Not Found" });
+  }
+
+  res
+    .status(200)
+    .json({ status: "success", msg: "Data Found", data: capaian_pembelajaran });
 });
 
 // get data capaian pembelajaran by id
@@ -28,10 +38,14 @@ router.get("/capaian_pembelajaran/:idCp", async (req, res) => {
   if (!capaian_pembelajaran) {
     return res
       .status(404)
-      .json({ msg: "Capaian Pembelajaran tidak ditemukan" });
+      .json({ status: "error", msg: "Capaian Pembelajaran Not Found" });
   }
 
-  res.json(capaian_pembelajaran);
+  res.status(200).json({
+    status: "success",
+    msg: "Capaian Pembelajaran Found",
+    data: capaian_pembelajaran,
+  });
 });
 
 // create data capaian pembelajaran
@@ -43,9 +57,10 @@ router.post("/:idMp/capaian_pembelajaran", async (req, res) => {
   };
 
   const validate = v.validate(req.body, schema);
+
   // cek validasi
   if (validate.length) {
-    return res.status(400).json(validate);
+    return res.status(400).json({ status: "error", msg: validate });
   }
 
   const capaian_pembelajaran = await CapaianPembelajaran.create({
@@ -54,7 +69,11 @@ router.post("/:idMp/capaian_pembelajaran", async (req, res) => {
     idMp: idMp,
   });
 
-  res.status(201).json(capaian_pembelajaran);
+  res.status(201).json({
+    status: "success",
+    msg: "Capaian Pembelajaran Successfuly Created",
+    data: capaian_pembelajaran,
+  });
 });
 
 // delete capaian pembelajaran
@@ -65,12 +84,13 @@ router.delete("/capaian_pembelajaran/:idCp", async (req, res) => {
   if (!capaian_pembelajaran) {
     return res
       .status(404)
-      .json({ msg: "Capaian Pembelajaran tidak ditemukan" });
+      .json({ status: "error", msg: "Capaian Pembelajaran Not Found" });
   }
 
   await capaian_pembelajaran.destroy();
   res.json({
-    msg: "Capaian Pembelajaran berhasil dihapus",
+    status: "success",
+    msg: "Capaian Pembelajaran Succesfully Deleted",
   });
 });
 
@@ -82,7 +102,7 @@ router.put("/capaian_pembelajaran/:idCp", async (req, res) => {
   if (!dataCapaian) {
     return res
       .status(400)
-      .json({ msg: "Capaian Pembelajaran tidak ditemukan" });
+      .json({ status: "error", msg: "Capaian Pembelajaran Not Found" });
   }
 
   const schema = {
@@ -91,13 +111,18 @@ router.put("/capaian_pembelajaran/:idCp", async (req, res) => {
   };
 
   const validate = v.validate(req.body, schema);
+
   // cek validasi
   if (validate.length) {
-    return res.status(400).json(validate);
+    return res.status(400).json({ status: "error", msg: validate });
   }
 
   dataCapaian = await dataCapaian.update(req.body);
-  res.json(dataCapaian);
+  res.status(200).json({
+    status: "success",
+    msg: "Data Capaian Succesfully Updated",
+    data: dataCapaian,
+  });
 });
 
 // ------------------- Tujuan Pembelajaran -------------------
@@ -107,7 +132,16 @@ router.get("/:idMp/tujuan_pembelajaran", async (req, res) => {
   const tujuan_pembelajaran = await TujuanPembelajaran.findAll({
     where: { idMp: idMp },
   });
-  res.send(tujuan_pembelajaran);
+
+  if (tujuan_pembelajaran.length === 0) {
+    return res
+      .status(404)
+      .json({ status: "success", msg: "Data Tujuan Pembelajaran Not Found" });
+  }
+
+  res
+    .status(200)
+    .json({ status: "success", msg: "Data Found", data: tujuan_pembelajaran });
 });
 
 // get data tujuan pembelajaran by id
@@ -116,10 +150,14 @@ router.get("/tujuan_pembelajaran/:idTp", async (req, res) => {
   const tujuan_pembelajaran = await TujuanPembelajaran.findByPk(idTp);
 
   if (!tujuan_pembelajaran) {
-    return res.status(404).json({ msg: "Tujuan Pembelajaran tidak ditemukan" });
+    return res
+      .status(404)
+      .json({ status: "error", msg: "Tujuan Pembelajaran Not Found" });
   }
 
-  res.json(tujuan_pembelajaran);
+  res
+    .status(200)
+    .json({ status: "success", msg: "Data Found", data: tujuan_pembelajaran });
 });
 
 // create data tujuan pembelajaran
@@ -131,9 +169,10 @@ router.post("/:idMp/tujuan_pembelajaran", async (req, res) => {
   };
 
   const validate = v.validate(req.body, schema);
+
   // cek validasi
   if (validate.length) {
-    return res.status(400).json(validate);
+    return res.status(400).json({ status: "error", msg: validate });
   }
 
   const tujuan_pembelajaran = await TujuanPembelajaran.create({
@@ -142,7 +181,11 @@ router.post("/:idMp/tujuan_pembelajaran", async (req, res) => {
     idMp: idMp,
   });
 
-  res.status(201).json(tujuan_pembelajaran);
+  res.status(201).json({
+    status: "success",
+    msg: "Tujuan Pembelajaran Succesfully Created",
+    data: tujuan_pembelajaran,
+  });
 });
 
 // delete tujuan pembelajaran
@@ -151,11 +194,14 @@ router.delete("/tujuan_pembelajaran/:idTp", async (req, res) => {
   const tujuan_pembelajaran = await TujuanPembelajaran.findByPk(idTp);
 
   if (!tujuan_pembelajaran) {
-    return res.status(404).json({ msg: "Tujuan Pembelajaran tidak ditemukan" });
+    return res
+      .status(404)
+      .json({ status: "error", msg: "Tujuan Pembelajaran Not Found" });
   }
 
   await tujuan_pembelajaran.destroy();
-  res.json({
+  res.status(200).json({
+    status: "success",
     msg: "Tujuan Pembelajaran berhasil dihapus",
   });
 });
@@ -166,7 +212,9 @@ router.put("/tujuan_pembelajaran/:idTp", async (req, res) => {
   let dataTujuan = await TujuanPembelajaran.findByPk(idTp);
 
   if (!dataTujuan) {
-    return res.status(400).json({ msg: "Tujuan Pembelajaran tidak ditemukan" });
+    return res
+      .status(400)
+      .json({ status: "error", msg: "Tujuan Pembelajaran Not Found" });
   }
 
   const schema = {
@@ -177,11 +225,15 @@ router.put("/tujuan_pembelajaran/:idTp", async (req, res) => {
   const validate = v.validate(req.body, schema);
   // cek validasi
   if (validate.length) {
-    return res.status(400).json(validate);
+    return res.status(400).json({ status: "error", msg: validate });
   }
 
   dataTujuan = await dataTujuan.update(req.body);
-  res.json(dataTujuan);
+  res.status(200).json({
+    status: "success",
+    msg: "Tujuan Pembelajaran Succesfully Created",
+    data: dataTujuan,
+  });
 });
 
 // ------------------- Alur Tujuan Pembelajaran -------------------
@@ -191,7 +243,19 @@ router.get("/:idMp/alur_tujuan_pembelajaran", async (req, res) => {
   const alur_tujuan_pembelajaran = await AlurTujuanPembelajaran.findAll({
     where: { idMp: idMp },
   });
-  res.send(alur_tujuan_pembelajaran);
+
+  if (alur_tujuan_pembelajaran.length === 0) {
+    return res.status(404).json({
+      status: "success",
+      msg: "Data Not Found",
+    });
+  }
+
+  res.status(200).json({
+    status: "success",
+    msg: "Data Found",
+    data: alur_tujuan_pembelajaran,
+  });
 });
 
 // get data alur tujuan pembelajaran by id
@@ -200,12 +264,17 @@ router.get("/alur_tujuan_pembelajaran/:idAtp", async (req, res) => {
   const alur_tujuan_pembelajaran = await AlurTujuanPembelajaran.findByPk(idAtp);
 
   if (!alur_tujuan_pembelajaran) {
-    return res
-      .status(404)
-      .json({ msg: "Alur Tujuan Pembelajaran tidak ditemukan" });
+    return res.status(404).json({
+      status: "error",
+      msg: "Data Not Found",
+    });
   }
 
-  res.json(alur_tujuan_pembelajaran);
+  res.status(200).json({
+    status: "success",
+    msg: "Data Found",
+    data: alur_tujuan_pembelajaran,
+  });
 });
 
 // create data alur tujuan pembelajaran
@@ -217,9 +286,10 @@ router.post("/:idMp/alur_tujuan_pembelajaran", async (req, res) => {
   };
 
   const validate = v.validate(req.body, schema);
+
   // cek validasi
   if (validate.length) {
-    return res.status(400).json(validate);
+    return res.status(400).json({ status: "error", msg: validate });
   }
 
   const alur_tujuan_pembelajaran = await AlurTujuanPembelajaran.create({
@@ -228,7 +298,11 @@ router.post("/:idMp/alur_tujuan_pembelajaran", async (req, res) => {
     idMp: idMp,
   });
 
-  res.status(201).json(alur_tujuan_pembelajaran);
+  res.status(201).json({
+    status: "success",
+    msg: "Alur Tujuan Pembelajaran Succesfully Created",
+    data: alur_tujuan_pembelajaran,
+  });
 });
 
 // delete alur tujuan pembelajaran
@@ -239,12 +313,13 @@ router.delete("/alur_tujuan_pembelajaran/:idAtp", async (req, res) => {
   if (!alur_tujuan_pembelajaran) {
     return res
       .status(404)
-      .json({ msg: "Alur Tujuan Pembelajaran tidak ditemukan" });
+      .json({ status: "error", msg: "Alur Tujuan Pembelajaran Not Found" });
   }
 
   await alur_tujuan_pembelajaran.destroy();
-  res.json({
-    msg: "Alur Tujuan Pembelajaran berhasil dihapus",
+  res.status(200).json({
+    status: "success",
+    msg: "Alur Tujuan Pembelajaran Succesfully Deleted",
   });
 });
 
@@ -256,7 +331,7 @@ router.put("/alur_tujuan_pembelajaran/:idAtp", async (req, res) => {
   if (!dataAlur) {
     return res
       .status(400)
-      .json({ msg: "Alur Tujuan Pembelajaran tidak ditemukan" });
+      .json({ status: "error", msg: "Alur Tujuan Pembelajaran Not Found" });
   }
 
   const schema = {
@@ -265,13 +340,18 @@ router.put("/alur_tujuan_pembelajaran/:idAtp", async (req, res) => {
   };
 
   const validate = v.validate(req.body, schema);
+
   // cek validasi
   if (validate.length) {
-    return res.status(400).json(validate);
+    return res.status(400).json({ status: "error", msg: validate });
   }
 
   dataAlur = await dataAlur.update(req.body);
-  res.json(dataAlur);
+  res.status(200).json({
+    status: "success",
+    msg: "Alur Data Pembelajaran Succesfully Updated",
+    data: dataAlur,
+  });
 });
 
 // ------------------- Modul Pembelajaran -------------------
@@ -281,7 +361,16 @@ router.get("/:idMp/modul_pembelajaran", async (req, res) => {
   const modul_pembelajaran = await ModulPembelajaran.findAll({
     where: { idMp: idMp },
   });
-  res.send(modul_pembelajaran);
+
+  if (modul_pembelajaran.length === 0) {
+    return res
+      .status(404)
+      .json({ status: "success", msg: "Data Modul Pembelajaran Not Found" });
+  }
+
+  res
+    .status(200)
+    .json({ status: "success", msg: "Data Found", data: modul_pembelajaran });
 });
 
 // get data modul pembelajaran by id
@@ -290,10 +379,12 @@ router.get("/modul_pembelajaran/:idModul", async (req, res) => {
   const modul_pembelajaran = await ModulPembelajaran.findByPk(idModul);
 
   if (!modul_pembelajaran) {
-    return res.status(404).json({ msg: "Modul Pembelajaran tidak ditemukan" });
+    return res.status(404).json({ status: "error", msg: "Data Not Found" });
   }
 
-  res.json(modul_pembelajaran);
+  res
+    .status(200)
+    .json({ status: "success", msg: "Data Found", data: modul_pembelajaran });
 });
 
 // create data modul pembelajaran
@@ -315,9 +406,10 @@ router.post("/:idMp/modul_pembelajaran", async (req, res) => {
   };
 
   const validate = v.validate(req.body, schema);
+
   // cek validasi
   if (validate.length) {
-    return res.status(400).json(validate);
+    return res.status(400).json({ status: "error", msg: validate });
   }
 
   const modul_pembelajaran = await ModulPembelajaran.create({
@@ -336,7 +428,11 @@ router.post("/:idMp/modul_pembelajaran", async (req, res) => {
     idMp: idMp,
   });
 
-  res.status(201).json(modul_pembelajaran);
+  res.status(201).json({
+    status: "success",
+    msg: "Modul Pembelajaran Succesfully Created",
+    data: modul_pembelajaran,
+  });
 });
 
 // delete modul pembelajaran
@@ -345,12 +441,13 @@ router.delete("/modul_pembelajaran/:idModul", async (req, res) => {
   const modul_pembelajaran = await ModulPembelajaran.findByPk(idModul);
 
   if (!modul_pembelajaran) {
-    return res.status(404).json({ msg: "Modul Pembelajaran tidak ditemukan" });
+    return res.status(404).json({ status: "error", msg: "Data Not Found" });
   }
 
   await modul_pembelajaran.destroy();
-  res.json({
-    msg: "Modul Pembelajaran berhasil dihapus",
+  res.status(200).json({
+    status: "success",
+    msg: "Modul Pembelajaran Succesfully Deleted",
   });
 });
 
@@ -360,7 +457,9 @@ router.put("/modul_pembelajaran/:idModul", async (req, res) => {
   let dataModul = await ModulPembelajaran.findByPk(idModul);
 
   if (!dataModul) {
-    return res.status(400).json({ msg: "Modul Pembelajaran tidak ditemukan" });
+    return res
+      .status(400)
+      .json({ status: "error", msg: "Modul Pembelajaran Not Found" });
   }
 
   const schema = {
@@ -379,23 +478,36 @@ router.put("/modul_pembelajaran/:idModul", async (req, res) => {
   };
 
   const validate = v.validate(req.body, schema);
+
   // cek validasi
   if (validate.length) {
-    return res.status(400).json(validate);
+    return res.status(400).json({ status: "error", msg: validate });
   }
 
   dataModul = await dataModul.update(req.body);
-  res.json(dataModul);
+  res.status(200).json({
+    status: "success",
+    msg: "Modul Pembelajaran Succesfully Updated",
+    data: dataModul,
+  });
 });
 
 // asesmen
 // get all data asesmen
 router.get("/:idMp/asesmen", async (req, res) => {
   const idMp = req.params.idMp;
+
   const asesmen = await Asesmen.findAll({
     where: { idMp: idMp },
   });
-  res.send(asesmen);
+
+  if (asesmen.length === 0) {
+    return res
+      .status(404)
+      .json({ status: "error", msg: "Data Asesmen Not Found" });
+  }
+
+  res.status(200).json({ status: "success", msg: "Data Found", data: asesmen });
 });
 
 // get data asesmen by id
@@ -404,10 +516,10 @@ router.get("/asesmen/:idAsesmen", async (req, res) => {
   const asesmen = await Asesmen.findByPk(idAsesmen);
 
   if (!asesmen) {
-    return res.status(404).json({ msg: "Asesmen tidak ditemukan" });
+    return res.status(404).json({ status: "error", msg: "Asesmen Not Found" });
   }
 
-  res.json(asesmen);
+  res.status(200).json({ status: "success", msg: "Data Found", data: asesmen });
 });
 
 // create data asesmen
@@ -421,9 +533,10 @@ router.post("/:idMp/asesmen", async (req, res) => {
   };
 
   const validate = v.validate(req.body, schema);
+
   // cek validasi
   if (validate.length) {
-    return res.status(400).json(validate);
+    return res.status(400).json({ status: "error", msg: validate });
   }
 
   const asesmen = await Asesmen.create({
@@ -434,7 +547,11 @@ router.post("/:idMp/asesmen", async (req, res) => {
     idMp: idMp,
   });
 
-  res.status(201).json(asesmen);
+  res.status(201).json({
+    status: "success",
+    msg: "Asesmen Succesfully Created",
+    data: asesmen,
+  });
 });
 
 // update asesmen
@@ -443,7 +560,9 @@ router.put("/asesmen/:idAsesmen", async (req, res) => {
   let dataAsesmen = await Asesmen.findByPk(idAsesmen);
 
   if (!dataAsesmen) {
-    return res.status(400).json({ msg: "Asesmen tidak ditemukan" });
+    return res
+      .status(400)
+      .json({ status: "error", msg: "Asesmen tidak ditemukan" });
   }
 
   const schema = {
@@ -454,13 +573,18 @@ router.put("/asesmen/:idAsesmen", async (req, res) => {
   };
 
   const validate = v.validate(req.body, schema);
+
   // cek validasi
   if (validate.length) {
-    return res.status(400).json(validate);
+    return res.status(400).json({ status: "error", msg: validate });
   }
 
   dataAsesmen = await dataAsesmen.update(req.body);
-  res.json(dataAsesmen);
+  res.status(200).json({
+    status: "success",
+    msg: "Asesmen Updated Succesfully",
+    data: dataAsesmen,
+  });
 });
 
 // delete asesmen
@@ -469,12 +593,13 @@ router.delete("/asesmen/:idAsesmen", async (req, res) => {
   const asesmen = await Asesmen.findByPk(idAsesmen);
 
   if (!asesmen) {
-    return res.status(404).json({ msg: "Asesmen tidak ditemukan" });
+    return res.status(404).json({ status: "error", msg: "Asesmen Not Found" });
   }
 
   await asesmen.destroy();
-  res.json({
-    msg: "Asesmen berhasil dihapus",
+  res.status(200).json({
+    status: "success",
+    msg: "Asesmen Succesfully Deleted",
   });
 });
 
