@@ -8,11 +8,75 @@ const JWT_EXPIRES_IN = "1h";
 var jwt = require("jsonwebtoken");
 
 const { Users } = require("../models");
+const authMiddleware = require("../middleware/authMiddleware");
 
 const v = new Validator();
 
+// tes token middleware
+router.get("/hello", authMiddleware, async (req, res) => {
+  try {
+    res.status(200).json({
+      status: "success",
+      msg: "Hello",
+      user: req.user,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      status: "error",
+      msg: "Terjadi kesalahan server",
+      error: error.message,
+    });
+  }
+});
+
+// user login
+router.post("/login", async (req, res) => {
+  const { nip, password } = req.body;
+
+  try {
+    // check data in database with nip and password
+    const user = await Users.findOne({
+      where: {
+        nip,
+        password,
+      },
+    });
+
+    if (!user) {
+      return res.status(401).json({
+        status: "Error",
+        msg: "NIP atau Password salah",
+      });
+    }
+
+    // data save to token
+    const payload = {
+      idUser: user.idUser,
+      nip: user.nip,
+      nameUser: user.nameUser,
+    };
+
+    // generate token with expires 1hour
+    const token = jwt.sign(payload, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
+
+    res.json({
+      status: "success",
+      msg: "Login berhasil",
+      token,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      status: "error",
+      msg: "Terjadi kesalahan server",
+      error: error.message,
+    });
+  }
+});
+
 // create user
-router.post("/", async (req, res, next) => {
+router.post("/", authMiddleware, async (req, res, next) => {
   const schema = {
     nip: "string",
     nameUser: "string",
@@ -63,7 +127,7 @@ router.post("/", async (req, res, next) => {
 });
 
 // update data
-router.put("/:id", async (req, res) => {
+router.put("/:id", authMiddleware, async (req, res) => {
   const id = req.params.id;
 
   let user = await Users.findByPk(id);
@@ -112,7 +176,7 @@ router.put("/:id", async (req, res) => {
 });
 
 // get all data
-router.get("/", async (req, res) => {
+router.get("/", authMiddleware, async (req, res) => {
   try {
     const users = await Users.findAll();
     res.status(200).json({
@@ -158,7 +222,7 @@ router.get("/:id", async (req, res) => {
 });
 
 // delete user
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", authMiddleware, async (req, res) => {
   const id = req.params.id;
   const user = await Users.findByPk(id);
 
@@ -181,51 +245,6 @@ router.delete("/:id", async (req, res) => {
     return res.status(500).json({
       status: "error",
       msg: "Kesalahan pada server",
-      error: error.message,
-    });
-  }
-});
-
-// user login
-router.post("/login", async (req, res) => {
-  const { nip, password } = req.body;
-
-  try {
-    // check data in database with nip and password
-    const user = await Users.findOne({
-      where: {
-        nip,
-        password,
-      },
-    });
-
-    if (!user) {
-      return res.status(401).json({
-        status: "Error",
-        msg: "NIP atau Password salah",
-      });
-    }
-
-    // data save to token
-    const payload = {
-      idUser: user.idUser,
-      nip: user.nip,
-      nameUser: user.nameUser,
-    };
-
-    // generate token with expires 1hour
-    const token = jwt.sign(payload, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
-
-    res.json({
-      status: "success",
-      msg: "Login berhasil",
-      token,
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({
-      status: "error",
-      msg: "Terjadi kesalahan server",
       error: error.message,
     });
   }

@@ -35,7 +35,8 @@ router.get("/:id", async (req, res) => {
 router.post("/", async (req, res) => {
   const schema = {
     dimensi: "string",
-    elemen: "string",
+    elemen: "array", // for react app
+    // elemen: "string",
   };
 
   const valid = v.validate(req.body, schema);
@@ -45,9 +46,18 @@ router.post("/", async (req, res) => {
     return res.status(400).json(valid);
   }
 
-  const profilPelajar = await ProfilPelajar.create(req.body);
-
-  res.json(profilPelajar);
+  try {
+    const dataToCreate = { ...req.body };
+    if (Array.isArray(req.body.elemen)) {
+      dataToCreate.elemen = JSON.stringify(req.body.elemen);
+      console.log("Data to create", dataToCreate.elemen);
+    }
+    const profilPelajar = await ProfilPelajar.create(dataToCreate);
+    res.json(profilPelajar);
+  } catch (error) {
+    console.error("Error creating data:", error);
+    res.status(500).json({ message: "Error creating data" });
+  }
 });
 
 // edit data profil pelajar
@@ -63,19 +73,23 @@ router.put("/:id", async (req, res) => {
 
   const schema = {
     dimensi: "string|optional",
-    elemen: "string|optional",
+    elemen: "array|optional",
+    // elemen: "string|optional",
   };
 
   const valid = v.validate(req.body, schema);
 
-  //   cek validasi
-  if (valid.length) {
-    return res.status(400).json(valid);
+  try {
+    const dataToUpdate = { ...req.body };
+    if (Array.isArray(req.body.elemen)) {
+      dataToUpdate.elemen = JSON.stringify(req.body.elemen);
+    }
+    await profilPelajar.update(dataToUpdate);
+    res.json(profilPelajar);
+  } catch (error) {
+    console.error("Error updating data:", error);
+    res.status(500).json({ message: "Error updating data" });
   }
-
-  await profilPelajar.update(req.body);
-
-  res.json(profilPelajar);
 });
 
 // delete data profil pelajar
