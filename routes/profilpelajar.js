@@ -12,9 +12,15 @@ router.get("/", async (req, res) => {
 
   //   jika tidak ada data
   if (profilPelajar.length === 0) {
-    return res.json({ message: "Data profil pelajar kosong" });
+    return res.status(404).json({
+      status: "success",
+      message: "Data profil pelajar kosong",
+    });
   }
-  res.json(profilPelajar);
+
+  res
+    .status(200)
+    .json({ status: "success", message: "Data ada", data: profilPelajar });
 });
 
 // get data profil pelajar by id
@@ -25,10 +31,17 @@ router.get("/:id", async (req, res) => {
 
   //   jika data tidak ditemukan
   if (!profilPelajar) {
-    return res.json({ message: "Data profil pelajar tidak ditemukan" });
+    return res.status(404).json({
+      status: "success",
+      message: "Data Profil Not Found",
+    });
   }
 
-  res.json(profilPelajar);
+  res.status(200).json({
+    status: "success",
+    message: "Data Found",
+    data: profilPelajar,
+  });
 });
 
 // create data profil pelajar
@@ -43,7 +56,7 @@ router.post("/", async (req, res) => {
 
   //   cek validasi
   if (valid.length) {
-    return res.status(400).json(valid);
+    return res.status(400).json({ status: "error", message: valid });
   }
 
   try {
@@ -53,10 +66,14 @@ router.post("/", async (req, res) => {
       console.log("Data to create", dataToCreate.elemen);
     }
     const profilPelajar = await ProfilPelajar.create(dataToCreate);
-    res.json(profilPelajar);
+    res.status(200).json({
+      status: "success",
+      message: "Profil pelajar succesfully created",
+      data: profilPelajar,
+    });
   } catch (error) {
     console.error("Error creating data:", error);
-    res.status(500).json({ message: "Error creating data" });
+    res.status(500).json({ status: "error", message: "Error creating data" });
   }
 });
 
@@ -68,7 +85,10 @@ router.put("/:id", async (req, res) => {
 
   //   cek data di db
   if (!profilPelajar) {
-    return res.json({ message: "Data profil pelajar tidak ditemukan" });
+    return res.status(404).json({
+      status: "success",
+      message: "Data Profil Pelajar Not Found",
+    });
   }
 
   const schema = {
@@ -85,10 +105,14 @@ router.put("/:id", async (req, res) => {
       dataToUpdate.elemen = JSON.stringify(req.body.elemen);
     }
     await profilPelajar.update(dataToUpdate);
-    res.json(profilPelajar);
+    res.status(200).json({
+      status: "success",
+      message: "Data Updated Successfully",
+      data: profilPelajar,
+    });
   } catch (error) {
     console.error("Error updating data:", error);
-    res.status(500).json({ message: "Error updating data" });
+    res.status(500).json({ status: "error", message: "Error updating data" });
   }
 });
 
@@ -100,12 +124,18 @@ router.delete("/:id", async (req, res) => {
 
   //   cek data di db
   if (!profilPelajar) {
-    return res.json({ message: "Data profil pelajar tidak ditemukan" });
+    return res.status(404).json({
+      status: "success",
+      message: "Data Profil Pelajar Not Found",
+    });
   }
 
   await profilPelajar.destroy();
 
-  res.json({ message: "Data profil pelajar berhasil dihapus" });
+  res.status(200).json({
+    status: "success",
+    message: "Data Profil Pelajar Deleted Successfully",
+  });
 });
 
 module.exports = router;
