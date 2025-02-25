@@ -60,7 +60,7 @@ router.post("/login", async (req, res) => {
     // generate token with expires 1hour
     const token = jwt.sign(payload, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
 
-    res.json({
+    res.status(200).json({
       status: "success",
       msg: "Login berhasil",
       token,

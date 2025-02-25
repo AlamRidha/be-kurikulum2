@@ -14,13 +14,13 @@ router.get("/", async (req, res) => {
   if (profilPelajar.length === 0) {
     return res.status(404).json({
       status: "success",
-      message: "Data profil pelajar kosong",
+      msg: "Data profil pelajar kosong",
     });
   }
 
   res
     .status(200)
-    .json({ status: "success", message: "Data ada", data: profilPelajar });
+    .json({ status: "success", msg: "Data ada", data: profilPelajar });
 });
 
 // get data profil pelajar by id
@@ -33,13 +33,13 @@ router.get("/:id", async (req, res) => {
   if (!profilPelajar) {
     return res.status(404).json({
       status: "success",
-      message: "Data Profil Not Found",
+      msg: "Data Profil Not Found",
     });
   }
 
   res.status(200).json({
     status: "success",
-    message: "Data Found",
+    msg: "Data Found",
     data: profilPelajar,
   });
 });
@@ -56,7 +56,7 @@ router.post("/", async (req, res) => {
 
   //   cek validasi
   if (valid.length) {
-    return res.status(400).json({ status: "error", message: valid });
+    return res.status(400).json({ status: "error", msg: valid });
   }
 
   try {
@@ -68,12 +68,12 @@ router.post("/", async (req, res) => {
     const profilPelajar = await ProfilPelajar.create(dataToCreate);
     res.status(200).json({
       status: "success",
-      message: "Profil pelajar succesfully created",
+      msg: "Profil pelajar succesfully created",
       data: profilPelajar,
     });
   } catch (error) {
     console.error("Error creating data:", error);
-    res.status(500).json({ status: "error", message: "Error creating data" });
+    res.status(500).json({ status: "error", msg: "Error creating data" });
   }
 });
 
@@ -87,7 +87,7 @@ router.put("/:id", async (req, res) => {
   if (!profilPelajar) {
     return res.status(404).json({
       status: "success",
-      message: "Data Profil Pelajar Not Found",
+      msg: "Data Profil Pelajar Not Found",
     });
   }
 
@@ -107,12 +107,12 @@ router.put("/:id", async (req, res) => {
     await profilPelajar.update(dataToUpdate);
     res.status(200).json({
       status: "success",
-      message: "Data Updated Successfully",
+      msg: "Data Updated Successfully",
       data: profilPelajar,
     });
   } catch (error) {
     console.error("Error updating data:", error);
-    res.status(500).json({ status: "error", message: "Error updating data" });
+    res.status(500).json({ status: "error", msg: "Error updating data" });
   }
 });
 
@@ -126,7 +126,7 @@ router.delete("/:id", async (req, res) => {
   if (!profilPelajar) {
     return res.status(404).json({
       status: "success",
-      message: "Data Profil Pelajar Not Found",
+      msg: "Data Profil Pelajar Not Found",
     });
   }
 
@@ -134,7 +134,7 @@ router.delete("/:id", async (req, res) => {
 
   res.status(200).json({
     status: "success",
-    message: "Data Profil Pelajar Deleted Successfully",
+    msg: "Data Profil Pelajar Deleted Successfully",
   });
 });
 
