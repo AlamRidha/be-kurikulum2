@@ -10,9 +10,16 @@ const v = new Validator();
 router.get("/", async (req, res) => {
   try {
     const kurikulum = await Kurikulum.findAll();
-    res.status(200).json(kurikulum);
+
+    if (kurikulum.length === 0) {
+      return res.status(404).json({ status: "success", msg: "Data Empty" });
+    }
+
+    res
+      .status(200)
+      .json({ status: "success", msg: "Data Found", data: kurikulum });
   } catch (error) {
-    res.status(500).json({ error: "Failed to fetch kurikulum." });
+    res.status(500).json({ status: "error", msg: error.message });
   }
 });
 
@@ -28,26 +35,35 @@ router.post("/", upload.single("linkKurikulum"), async (req, res) => {
       linkKurikulum,
     });
 
-    res.status(201).json(newKurikulum);
+    res.status(201).json({
+      status: "success",
+      msg: "Data Successful Created",
+      data: newKurikulum,
+    });
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ error: "Failed to create kurikulum." });
+    res.status(500).json({ status: "error", msg: error.message });
   }
 });
 
 // delete data
 router.delete("/:id", async (req, res) => {
-  const id = req.params.id;
+  try {
+    const id = req.params.id;
 
-  const kurikulum = await Kurikulum.findByPk(id);
+    const kurikulum = await Kurikulum.findByPk(id);
 
-  if (!kurikulum) {
-    return res.status(404).json({ msg: "Data kurikulum tidak ditemukan" });
+    if (!kurikulum) {
+      return res.status(404).json({ status: "success", msg: "Data Not Found" });
+    }
+
+    await kurikulum.destroy();
+
+    res
+      .status(200)
+      .json({ status: "success", msg: "Data Successfully Deleted" });
+  } catch (error) {
+    res.status(500).json({ status: "error", msg: error.message });
   }
-
-  await kurikulum.destroy();
-
-  res.json({ msg: "Data buku berhasil dihapus" });
 });
 
 module.exports = router;
