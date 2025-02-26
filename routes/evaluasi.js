@@ -8,96 +8,133 @@ const v = new Validator();
 
 // get all data
 router.get("/", async (req, res) => {
-  const evaluasi = await Evaluasi.findAll();
+  try {
+    const evaluasi = await Evaluasi.findAll();
 
-  //   jika data kosong
-  if (!evaluasi.length) {
-    return res.status(400).json({ msg: "Data evaluasi kosong" });
+    //   jika data kosong
+    if (!evaluasi.length) {
+      return res.status(400).json({ status: "success", msg: "Data Empty" });
+    }
+
+    return res.status(200).json({
+      status: "success",
+      msg: "Data Found",
+      data: evaluasi,
+    });
+  } catch (error) {
+    return res.status(500).json({ status: "error", msg: error.message });
   }
-
-  return res.json(evaluasi);
 });
 
 // get data by id
 router.get("/:id", async (req, res) => {
-  const id = req.params.id;
+  try {
+    const id = req.params.id;
 
-  const evaluasi = await Evaluasi.findByPk(id);
+    const evaluasi = await Evaluasi.findByPk(id);
 
-  //   jika data kosong
-  if (!evaluasi) {
-    return res.status(400).json({ msg: "Data evaluasi tidak ditemukan" });
+    if (!evaluasi) {
+      return res.status(400).json({ status: "error", msg: "Data Not Found" });
+    }
+
+    return res
+      .status(200)
+      .json({ status: "success", msg: "Data Found", data: evaluasi });
+  } catch (error) {
+    return res.status(500).json({ status: "error", msg: error.message });
   }
-
-  return res.json(evaluasi);
 });
 
 // create data
 router.post("/", async (req, res, next) => {
-  const schema = {
-    namaKelas: "string",
-    semester: "string",
-    tahunPelajaran: "string",
-    linkEvaluasi: "string",
-    masalah_evaluasi: "string",
-    status_evaluasi: "string",
-  };
+  try {
+    const schema = {
+      namaKelas: "string",
+      semester: "string",
+      tahunPelajaran: "string",
+      linkEvaluasi: "string",
+      masalah_evaluasi: "string",
+      status_evaluasi: "string",
+    };
 
-  const validate = v.validate(req.body, schema);
-  // cek validasi
-  if (validate.length) {
-    return res.status(400).json(validate);
+    const validate = v.validate(req.body, schema);
+
+    // cek validasi
+    if (validate.length) {
+      return res.status(400).json({ status: "error", msg: validate });
+    }
+
+    // res.send("ok");
+    const evaluasi = await Evaluasi.create(req.body);
+
+    res.status(201).json({
+      status: "success",
+      msg: "Evaluasi Successfully Created",
+      data: evaluasi,
+    });
+  } catch (error) {
+    return res.status(500).json({ status: "error", msg: error.message });
   }
-
-  // res.send("ok");
-  const evaluasi = await Evaluasi.create(req.body);
-
-  res.status(201).json(evaluasi);
 });
 
 // update data
 router.put("/:id", async (req, res) => {
-  const id = req.params.id;
+  try {
+    const id = req.params.id;
 
-  let evaluasi = await Evaluasi.findByPk(id);
+    let evaluasi = await Evaluasi.findByPk(id);
 
-  // cek evaluasi di db
-  if (!evaluasi) {
-    return res.status(400).json({ msg: "Evaluasi tidak ditemukan" });
-  }
+    // cek evaluasi di db
+    if (!evaluasi) {
+      return res.status(400).json({ status: "error", msg: "Data Not Found" });
+    }
 
-  const schema = {
-    namaKelas: "string|optional",
-    semester: "string|optional",
-    tahunPelajaran: "string|optional",
-    linkEvaluasi: "string|optional",
-    masalah_evaluasi: "string|optional",
-    status_evaluasi: "string|optional",
-  };
+    const schema = {
+      namaKelas: "string|optional",
+      semester: "string|optional",
+      tahunPelajaran: "string|optional",
+      linkEvaluasi: "string|optional",
+      masalah_evaluasi: "string|optional",
+      status_evaluasi: "string|optional",
+    };
 
-  const validate = v.validate(req.body, schema);
-  // cek validasi
-  if (validate.length) {
-    return res.status(400).json(validate);
-  }
+    const validate = v.validate(req.body, schema);
 
-  evaluasi = await evaluasi.update(req.body);
-  res.json(evaluasi);
+    // cek validasi
+    if (validate.length) {
+      return res.status(400).json({ status: "error", msg: validate });
+    }
+
+    evaluasi = await evaluasi.update(req.body);
+    res.status(200).json({
+      status: "success",
+      msg: "Evaluasi Successfully Updated",
+      data: evaluasi,
+    });
+  } catch (error) {}
 });
 
 // delete data
 router.delete("/:id", async (req, res) => {
-  const id = req.params.id;
+  try {
+    const id = req.params.id;
 
-  let evaluasi = await Evaluasi.findByPk(id);
+    let evaluasi = await Evaluasi.findByPk(id);
 
-  // cek evaluasi di db
-  if (!evaluasi) {
-    return res.status(400).json({ msg: "Evaluasi tidak ditemukan" });
+    if (!evaluasi) {
+      return res
+        .status(400)
+        .json({ status: "error", msg: "Evaluasi Not Found" });
+    }
+
+    await evaluasi.destroy();
+
+    res
+      .status(200)
+      .json({ status: "success", msg: "Evaluasi Successfully Deleted" });
+  } catch (error) {
+    return res.status(500).json({ status: "error", msg: error });
   }
-
-  await evaluasi.destroy();
-  res.json({ msg: "Data evaluasi berhasil dihapus" });
 });
 
 module.exports = router;
