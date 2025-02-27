@@ -21,7 +21,7 @@ router.get("/", async (req, res) => {
 
     res
       .status(200)
-      .json({ status: "success", msg: "Data ada", data: profilPelajar });
+      .json({ status: "success", msg: "Data Found", data: profilPelajar });
   } catch (error) {
     console.error(error);
     res.status(500).json({
