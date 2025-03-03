@@ -8,8 +8,8 @@ module.exports = (sequelize, DataTypes) => {
         primaryKey: true,
         allowNull: false,
       },
-      elemen_capaian: {
-        type: DataTypes.TEXT,
+      idCp: {
+        type: DataTypes.INTEGER,
         allowNull: false,
       },
       tujuan_pembelajaran: {

@@ -12,9 +12,15 @@ module.exports = {
           primaryKey: true,
           allowNull: false,
         },
-        elemen_capaian: {
-          type: Sequelize.TEXT,
+        idCp: {
+          type: Sequelize.INTEGER,
           allowNull: false,
+          references: {
+            model: {
+              tableName: "capaian_pembelajaran",
+            },
+            key: "idCp",
+          },
         },
         tujuan_pembelajaran: {
           type: Sequelize.TEXT,
