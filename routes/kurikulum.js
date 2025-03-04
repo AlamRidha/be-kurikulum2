@@ -7,6 +7,7 @@ const { TujuanPembelajaran } = require("../models");
 const { AlurTujuanPembelajaran } = require("../models");
 const { ModulPembelajaran } = require("../models");
 const { Asesmen } = require("../models");
+const { parse } = require("dotenv");
 
 const v = new Validator();
 
@@ -165,6 +166,13 @@ router.get("/:idMp/tujuan_pembelajaran", async (req, res) => {
     const idMp = req.params.idMp;
     const tujuan_pembelajaran = await TujuanPembelajaran.findAll({
       where: { idMp: idMp },
+      include: [
+        {
+          model: CapaianPembelajaran,
+          as: "capaian_pembelajaran",
+          attributes: ["idCp", "elemen"],
+        },
+      ],
     });
 
     if (tujuan_pembelajaran.length === 0) {
@@ -212,7 +220,7 @@ router.post("/:idMp/tujuan_pembelajaran", async (req, res) => {
   try {
     const idMp = req.params.idMp;
     const schema = {
-      elemen_capaian: "string",
+      idCp: "number",
       tujuan_pembelajaran: "string",
     };
 
@@ -223,8 +231,11 @@ router.post("/:idMp/tujuan_pembelajaran", async (req, res) => {
       return res.status(400).json({ status: "error", msg: validate });
     }
 
+    // const idConvert = parseInt(req.body.idCp);
+
     const tujuan_pembelajaran = await TujuanPembelajaran.create({
-      elemen_capaian: req.body.elemen_capaian,
+      // idCp: idConvert,
+      idCp: req.body.idCp,
       tujuan_pembelajaran: req.body.tujuan_pembelajaran,
       idMp: idMp,
     });
@@ -276,7 +287,7 @@ router.put("/tujuan_pembelajaran/:idTp", async (req, res) => {
     }
 
     const schema = {
-      elemen_capaian: "string|optional",
+      idCp: "number|optional",
       tujuan_pembelajaran: "string|optional",
     };
 
@@ -289,7 +300,7 @@ router.put("/tujuan_pembelajaran/:idTp", async (req, res) => {
     dataTujuan = await dataTujuan.update(req.body);
     res.status(200).json({
       status: "success",
-      msg: "Tujuan Pembelajaran Succesfully Created",
+      msg: "Tujuan Pembelajaran Successfully Updated",
       data: dataTujuan,
     });
   } catch (error) {

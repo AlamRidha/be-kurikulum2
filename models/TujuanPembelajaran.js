@@ -27,5 +27,13 @@ module.exports = (sequelize, DataTypes) => {
     }
   );
 
+  // menambahkan relasi
+  TujuanPembelajaran.associate = (models) => {
+    TujuanPembelajaran.belongsTo(models.CapaianPembelajaran, {
+      foreignKey: "idCp",
+      as: "capaian_pembelajaran",
+    });
+  };
+
   return TujuanPembelajaran;
 };
