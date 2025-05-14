@@ -29,6 +29,34 @@ router.post("/", upload.single("linkKurikulum"), async (req, res) => {
     const { namaKurikulum, tahun } = req.body;
     const linkKurikulum = req.file ? req.file.filename : null;
 
+    // Schema validasi
+    const schema = {
+      namaKurikulum: { type: "string", min: 1, max: 255 },
+      tahun: { type: "string", min: 4, max: 4 }, // contoh: "2024"
+    };
+
+    // Jalankan validasi
+    const validationResult = v.validate({ namaKurikulum, tahun }, schema);
+    if (validationResult !== true) {
+      return res.status(400).json({
+        status: "error",
+        msg: "Validation Failed",
+        errors: validationResult,
+      });
+    }
+
+    // Validasi file wajib diisi
+    if (!linkKurikulum) {
+      return res.status(400).json({
+        status: "error",
+        msg: "Validation Failed",
+        errors: [
+          { field: "linkKurikulum", message: "File Kurikulum wajib diunggah" },
+        ],
+      });
+    }
+
+    // Simpan ke DB
     const newKurikulum = await Kurikulum.create({
       namaKurikulum,
       tahun,
@@ -61,6 +89,58 @@ router.delete("/:id", async (req, res) => {
     res
       .status(200)
       .json({ status: "success", msg: "Data Successfully Deleted" });
+  } catch (error) {
+    res.status(500).json({ status: "error", msg: error.message });
+  }
+});
+
+router.put("/:id", upload.single("linkKurikulum"), async (req, res) => {
+  try {
+    const id = req.params.id;
+    const { namaKurikulum, tahun } = req.body;
+
+    const schema = {
+      namaKurikulum: { type: "string", min: 1, max: 255 },
+      tahun: { type: "string", min: 4, max: 4 }, // contoh: "2024"
+    };
+
+    // Validasi input
+    const validationResult = v.validate({ namaKurikulum, tahun }, schema);
+    if (validationResult !== true) {
+      return res.status(400).json({
+        status: "error",
+        msg: "Validation Failed",
+        errors: validationResult,
+      });
+    }
+
+    // Cek data yang mau diupdate
+    const existingKurikulum = await Kurikulum.findByPk(id);
+    if (!existingKurikulum) {
+      return res.status(404).json({ status: "error", msg: "Data Not Found" });
+    }
+
+    // Pakai file baru jika ada, jika tidak tetap pakai file lama
+    const linkKurikulum = req.file
+      ? req.file.filename
+      : existingKurikulum.linkKurikulum;
+
+    // Lakukan update
+    await Kurikulum.update(
+      {
+        namaKurikulum,
+        tahun,
+        linkKurikulum,
+      },
+      {
+        where: { idKurikulum: id },
+      }
+    );
+
+    res.status(200).json({
+      status: "success",
+      msg: "Data Successfully Updated",
+    });
   } catch (error) {
     res.status(500).json({ status: "error", msg: error.message });
   }

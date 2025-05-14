@@ -15,3 +15,4 @@
    -> (7) if make model then use router in app.js then : npx sequelize db:migrate
    -> (8) delete migration npx sequelize db:migrate:undo --name fileMigrationName
    -> (9) npm i jsonwebtoken for using jsonwebtoken in login
+   -> (10) if any change or want delete migration file : npx sequelize db:migrate:undo --name your-migration-name.js
